@@ -1,0 +1,12 @@
+{
+  "name": "Language-exchange-contract",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "near-sdk-as": "^3.2.3"
+  },
+  "description": "This is a language exchange platform developed using the Near Protocol.",
+  "repository": "https://github.com/DigiCris/NearLanguageExchange/",
+  "author": "Cristian Marchese, Jhonaiker Blanco, Diego Torres, Jose roque"
+}

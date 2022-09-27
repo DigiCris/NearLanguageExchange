@@ -40,9 +40,24 @@ export class Review
 
     changePicture(quarrelPosition: i32, Pictures : string):void
     {
-        this.review[quarrelPosition].Pictures=Pictures;
+        let _review : OneReview;
+        _review= new OneReview;
+
+        _review.Comments=this.review[quarrelPosition].Comments;
+        _review.Pictures=Pictures;
+        _review.Quarrel=this.review[quarrelPosition].Quarrel;
+        _review.Rater=this.review[quarrelPosition].Rater;
+        _review.Rating=this.review[quarrelPosition].Rating;
+        _review.id=this.review[quarrelPosition].id;
+
+        //this.review[quarrelPosition].Pictures=Pictures;
+        this.review.replace(quarrelPosition,_review);
     }
 
+    getPicture(quarrelPosition: i32): string
+    {
+        return this.review[quarrelPosition].Pictures;
+    }
 }
 
 

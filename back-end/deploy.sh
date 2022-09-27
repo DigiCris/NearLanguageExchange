@@ -13,7 +13,8 @@ echo "2) setProfile"
 echo "3) getProfile"
 echo "4) rateProfile"
 echo "5) viewRate"
-echo "6) changePicture"
+echo "6) defendProfile"
+echo "7) viewPicture"
 
 read menu
 
@@ -67,7 +68,7 @@ case $menu in
 	echo "PROfile viewRate READ"
 	;;
   6)
-	FUNCTIONTOCALL="changePicture"
+	FUNCTIONTOCALL="defendProfile"
 	PLAYLOAD='{"id": "6", "quarrelPosition":0 , "Picture":"https://www.newPicture.com" }'
 	PLAYLOAD="'"$PLAYLOAD"'"
 	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
@@ -76,5 +77,14 @@ case $menu in
 	./run.sh
 	echo "PROfile rated"
 	;;
-
+  7)
+	FUNCTIONTOCALL="readPicture"
+	PLAYLOAD='{"id": "6", "quarrelPosition":0 }'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "PROfile readPicture"
+	;;
 esac

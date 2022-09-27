@@ -43,7 +43,7 @@ export function viewRate(id: string, quarrelPosition: i32):OneReview
     return RatingProfile.rating.getAllRatings(quarrelPosition);
 }
 
-export function changePicture(id: string, quarrelPosition: i32, Picture: string):void
+export function defendProfile(id: string, quarrelPosition: i32, Picture: string):void
 {
     let RatingProfile : Profile | null= getProfile(id);
     if (RatingProfile == null) 
@@ -51,6 +51,16 @@ export function changePicture(id: string, quarrelPosition: i32, Picture: string)
         throw new Error("profile not found");
     }
     RatingProfile.rating.changePicture(quarrelPosition,Picture);
+}
+
+export function readPicture(id: string, quarrelPosition: i32):string
+{
+    let RatingProfile : Profile | null= getProfile(id);
+    if (RatingProfile == null) 
+    {
+        throw new Error("profile not found");
+    }
+    return RatingProfile.rating.getPicture(quarrelPosition);
 }
 
 

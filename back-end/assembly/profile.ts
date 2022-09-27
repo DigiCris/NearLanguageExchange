@@ -42,7 +42,10 @@ export class Review
 export class Profile 
 {
     id: string;
-    name: string ;
+    dni: u32;
+    name: string;
+    email: string;
+    phone: u32; 
     description : string ;
     age : u8 ;
     sex : bool ;
@@ -65,7 +68,10 @@ export class Profile
     {
         const profile = new Profile();
         profile.id = payload.id;
+        profile.dni=payload.id;
         profile.name = payload.name;
+        profile.email = payload.email;
+        profile.phone = payload.phone;
         profile.description = payload.description;
         profile.age = payload.age;
         profile.country = payload.country;

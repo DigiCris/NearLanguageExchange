@@ -1,4 +1,4 @@
-import { Profile, listedProfiles, Review } from './model';
+import { Profile, listedProfiles, Review, OneReview } from './model';
 import { ContractPromiseBatch, context, u128, PersistentVector } from 'near-sdk-as';
 
 
@@ -23,6 +23,46 @@ export function getProfiles(): Profile[]
 }
 
 
+export function rateProfile(id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool):void
+{
+    let RatingProfile : Profile | null= getProfile(id);
+    if (RatingProfile == null) 
+    {
+        throw new Error("profile not found");
+    }
+    RatingProfile.rating.setAllRatings(rating,quarrel,comment,"none",context.sender);
+}
+
+export function viewRate(id: string, quarrelPosition: i32):OneReview
+{
+    let RatingProfile : Profile | null= getProfile(id);
+    if (RatingProfile == null) 
+    {
+        throw new Error("profile not found");
+    }
+    return RatingProfile.rating.getAllRatings(quarrelPosition);
+}
+
+export function changePicture(id: string, quarrelPosition: i32, Picture: string):void
+{
+    let RatingProfile : Profile | null= getProfile(id);
+    if (RatingProfile == null) 
+    {
+        throw new Error("profile not found");
+    }
+    RatingProfile.rating.changePicture(quarrelPosition,Picture);
+}
+
+
+
+
+
+
+
+
+
+
+/*
 export function rateProfile(id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool):void
 {
     let RatingProfile : Profile | null= getProfile(id);
@@ -75,29 +115,13 @@ export function viewPicture(id: string) : string[]
     return pictures;
 }
 
-
-
-
-
-/*
-export function buyProfile(id: string):void
+export function viewPicture(id: string, quarrelPosition: i32) : OneReview
 {
+    let RatingProfile : Profile | null= getProfile(id);
+    let _review:OneReview = RatingProfile!.rating
+    let pictures=RatingProfile!.rating.getPictures();
+    return pictures;
+}
 
-    const BuyingProfile : Profile | null= getProfile(id);
-    if (BuyingProfile == null) 
-    {
-        throw new Error("profile not found");
-    }
-    const RECEIVING_ACCOUNT:string = BuyingProfile.owner!;
-    const DEPOSIT: u128 = BuyingProfile.price!;
-    if (DEPOSIT.toString() != context.attachedDeposit.toString()) 
-    {
-        throw new Error("attached deposit should equal to the profile's price");
-    }
 
-    ContractPromiseBatch.create(RECEIVING_ACCOUNT).transfer(DEPOSIT);
-    BuyingProfile.incrementSoldAmount();
-    listedProfiles.set(BuyingProfile.id, BuyingProfile);
-
-}    
 */

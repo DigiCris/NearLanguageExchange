@@ -1,1 +1,1 @@
-near view languagedev.cryptocris.testnet viewPicture '{"id": "1"}'
+near view languagedev.cryptocris.testnet viewRate '{"id": "6", "quarrelPosition":0 }'

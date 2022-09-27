@@ -1,1 +1,1 @@
-near view languagedev.cryptocris.testnet getProduct '{"id": "0"}'
+near view languagedev.cryptocris.testnet viewPicture '{"id": "1"}'

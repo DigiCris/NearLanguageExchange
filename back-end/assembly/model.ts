@@ -1,40 +1,78 @@
-import { PersistentUnorderedMap, u128, context, u256} from "near-sdk-as";
-import { Vector } from "near-sdk-js";
+import { PersistentUnorderedMap, u128, context, u256, PersistentVector} from "near-sdk-as";
+//import { Vector } from "near-sdk-js";
 //export { u256 } from "as-bignum";
+
 
 @nearBindgen
 export class Review
 {
-    Rating : Vector;
-    Quarrel : Vector;
-    Comments : Vector;
-    Pictures : Vector;
+    Rating : PersistentVector<u16>;
+    Quarrel : PersistentVector<bool>;
+    Comments : PersistentVector<string>;
+    Pictures : PersistentVector<string>;
+    Rater: PersistentVector<string>;
 
     constructor() 
     {
-      this.Rating = new Vector('VId');
-      this.Quarrel = new Vector('VId');
-      this.Comments = new Vector('VId');
-      this.Pictures = new Vector('VId');
+        this.Rating = new PersistentVector<u16>("VIdr") ;
+        this.Quarrel = new PersistentVector<bool>("VIdq") ;
+        this.Comments = new PersistentVector<string>("VIdc") ;
+        this.Pictures = new PersistentVector<string>("VIdp") ;
     }
 
-    private addRating(value : u8) : void
-    {
-        this.Rating.push(value);
-    }
-    private addQuarrel(value : u8) : void
-    {
-        this.Quarrel.push(value);
-    }
-    private addComments(value : u8) : void
-    {
-        this.Comments.push(value);
-    }
-    private addPictures(value : u8) : void
-    {
-        this.Pictures.push(value);
-    }
 
+    getRating(): u16[] 
+    {
+        const res: u16[] = [];
+        for (let i = 0; i < this.Rating.length; i++) 
+        {
+            res.push(this.Rating[i]);
+        }
+        return res;
+    }
+    getQuarrel(): bool[] 
+    {
+        const res: bool[] = [];
+        for (let i = 0; i < this.Quarrel.length; i++) 
+        {
+            res.push(this.Quarrel[i]);
+        }
+        return res;
+    }
+    getComments(): string[] 
+    {
+        const res: string[] = [];
+        for (let i = 0; i < this.Comments.length; i++) 
+        {
+            res.push(this.Comments[i]);
+        }
+        return res;
+    }
+    getPictures(): string[] 
+    {
+        const res: string[] = [];
+        for (let i = 0; i < this.Pictures.length; i++) 
+        {
+            res.push(this.Pictures[i]);
+        }
+        return res;
+    }
+    setPicture(i:i32 , url: string): void 
+    {
+        this.Pictures[i]=url;
+    }
+    setComments(i:i32 , _comment: string): void 
+    {
+        this.Comments[i]=_comment;
+    }
+    setQuarrel(i:i32 , _quarrel: bool): void 
+    {
+        this.Quarrel[i]=_quarrel;
+    }
+    setRating(i:i32 , _rating : u16): void 
+    {
+        this.Rating[i]=_rating;
+    }
 }
 
 
@@ -45,7 +83,7 @@ export class Profile
     id: string;
     name: string ;
     description : string ;
-    age : u8 ;
+    age : u16 ;
     sex : bool ;
     country : string ;
     learn : string ;

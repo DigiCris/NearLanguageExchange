@@ -9,9 +9,14 @@ BUYER="buyer1"
 
 
 echo "1) Deploy"
-echo "2) setProduct"
-echo "3) getProduct"
-echo "4) buyProduct"
+echo "2) setProfile"
+echo "3) getProfile"
+echo "4) rateProfile"
+echo "5) viewComments"
+echo "6) viewPictures"
+echo "7) defendProfile"
+echo "8) changeRate"
+echo "9) viewAll"
 read menu
 
 case $menu in
@@ -21,36 +26,78 @@ case $menu in
 	echo "¡Deployed!"
   ;;
   2)
-	PLAYLOAD='{"product": {"id": "1", "name": "BBQ2", "description": "Grilled chicken and beef served with vegetables and chips.", "location": "Berlin, Germany", "price": "1000000000000000000000000", "image": "https://i.imgur.com/yPreV19.png"}}'
+	PLAYLOAD='{"profile": {"id": "1", "name": "Cris1", "description": "Learning Swedish.", "age": 33, "country": "Argentina", "learn": "Swedish", "teach": "Spanish", "teachTime": "Sa17-Su18", "meet": "meet.google.com/rri-fdmn-imv", "utc": -3}}'
 	PLAYLOAD="'"$PLAYLOAD"'"
-	FUNCTIONTOCALL="setProduct"
+	FUNCTIONTOCALL="setProfile"
 	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $MY_ACCOUNT"
 	echo $COMAND > run.sh
 	chmod 777 run.sh
 	./run.sh
-	echo "¡Product Set!"
+	echo "¡Profile Set!"
   ;;
   3)
-	FUNCTIONTOCALL="getProduct"
-	PLAYLOAD='{"id": "0"}'
+	FUNCTIONTOCALL="getProfile"
+	PLAYLOAD='{"id": "1"}'
 	PLAYLOAD="'"$PLAYLOAD"'"
 	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD"
 	echo $COMAND > run.sh
 	chmod 777 run.sh
 	./run.sh
-	echo "PRODUCT READ"
+	echo "PROfile READ"
 	;;
   4)
-
-	FUNCTIONTOCALL="buyProduct"
-	PLAYLOAD='{"id": "0"}'
+	FUNCTIONTOCALL="rateProfile"
+## (id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool)
+	PLAYLOAD='{"id": "1", "quarrelPosition":0 , "comment":"Good teacher","rating":5, "quarrel": false }'
 	PLAYLOAD="'"$PLAYLOAD"'"
-	AMOUNT="1000000000000000000000000"
-	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --depositYocto=$AMOUNT --accountId $BUYER.$MY_ACCOUNT"
+##	AMOUNT="1000000000000000000000000"
+##	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --depositYocto=$AMOUNT --accountId $BUYER.$MY_ACCOUNT"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
 	echo $COMAND > run.sh
 	chmod 777 run.sh
 	./run.sh
-	echo "PRODUCT bought"
-
+	echo "PROfile rated"
 	;;
+  5)
+	FUNCTIONTOCALL="viewComments"
+	PLAYLOAD='{"id": "1"}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "PROfile viewComments READ"
+	;;
+  6)
+	FUNCTIONTOCALL="viewPicture"
+	PLAYLOAD='{"id": "1"}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "PROfile viewpicture READ"
+	;;
+  7)
+	FUNCTIONTOCALL="defendProfile"
+## id: string, quarrelPosition: number, Picture: string)
+	PLAYLOAD='{"id": "1",  "quarrelPosition": 0 , "Picture":"https://picture00.com" }'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "PROfile defended"
+	;;
+  8)
+	FUNCTIONTOCALL="changeRateProfile"
+	PLAYLOAD='{"id": "1", "quarrelPosition":0 , "comment":"Bad teacher","rating":1, "quarrel": false }'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "PROfile rating changed"
+	;;
+
 esac

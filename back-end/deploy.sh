@@ -14,7 +14,15 @@ echo "3) getProfile"
 echo "4) rateProfile"
 echo "5) viewRate"
 echo "6) defendProfile"
-echo "7) viewPicture"
+echo "7) setClasses"
+echo "8) viewClasses"
+echo "9) viewMyClassesGivenn(no)"
+echo "10) viewClassesStartToStop"
+echo "11) getProfiles (all)"
+echo "12) takeClasses"
+echo "13) Mark class Taken"
+echo "14) Mark class given"
+echo "15) buy balance"
 
 read menu
 
@@ -75,16 +83,96 @@ case $menu in
 	echo $COMAND > run.sh
 	chmod 777 run.sh
 	./run.sh
-	echo "PROfile rated"
+	echo "PROfile defended. pic added."
 	;;
   7)
-	FUNCTIONTOCALL="readPicture"
-	PLAYLOAD='{"id": "6", "quarrelPosition":0 }'
+	FUNCTIONTOCALL="setClasses"
+	PLAYLOAD='{"Date": "28_09_22_WE14"}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "Classes set"
+	;;
+  8)
+	FUNCTIONTOCALL="viewClasses"
+	PLAYLOAD='{"classNumber": 3}'
 	PLAYLOAD="'"$PLAYLOAD"'"
 	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD"
 	echo $COMAND > run.sh
 	chmod 777 run.sh
 	./run.sh
-	echo "PROfile readPicture"
+	echo "viewClasses"
 	;;
+  9)
+	FUNCTIONTOCALL="viewMyClassesGiven"
+	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "viewClasses"
+	;;
+  10)
+	FUNCTIONTOCALL="viewClassesStartToStop"
+	PLAYLOAD='{"classNumberStart": 0, "classNumberStop":30}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "viewClasses"
+	;;
+  11)
+	FUNCTIONTOCALL="getProfiles"
+	COMAND="near view $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "viewClasses"
+	;;
+  12)
+	FUNCTIONTOCALL="takeClasses"
+	PLAYLOAD='{"id": 5}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "Classes set"
+	;;
+  13)
+	FUNCTIONTOCALL="markClassTaken"
+	PLAYLOAD='{"id": 5}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "Classes set"
+	;;
+  14)
+	FUNCTIONTOCALL="markClassGiven"
+	PLAYLOAD='{"id": 5}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "Classes set"
+	;;
+
+  15)
+	FUNCTIONTOCALL="buyBalance"
+## (id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool)
+	PLAYLOAD='{"id": "5"}'
+	PLAYLOAD="'"$PLAYLOAD"'"
+	AMOUNT="1000000000000000000000000"
+	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --depositYocto=$AMOUNT --accountId $BUYER.$MY_ACCOUNT"
+##	COMAND="near call $CONTRACT.$MY_ACCOUNT $FUNCTIONTOCALL $PLAYLOAD --accountId $BUYER.$MY_ACCOUNT"
+	echo $COMAND > run.sh
+	chmod 777 run.sh
+	./run.sh
+	echo "buyBalance"
+	;;	
 esac

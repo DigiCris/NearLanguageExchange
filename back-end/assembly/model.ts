@@ -1,5 +1,64 @@
 import { PersistentUnorderedMap, u128, context, u256, PersistentVector} from "near-sdk-as";
 
+
+
+@nearBindgen
+export class Classes
+{
+    Given : bool;
+    Taken : bool;
+    Released: bool;
+    Booked: bool;
+    Teacher : string;
+    Student : string;
+    Date: string;
+    id: i32;
+    //Language: string;
+
+    constructor() 
+    {
+        this.Given=false;
+        this.Taken=false;
+        this.Released=false;
+        this.Booked=false;
+        this.Teacher="none";
+        this.Student="nono";
+        this.Date="never";
+        this.id=0;
+    }
+}
+
+@nearBindgen
+export class TakenGiven
+{
+    taken : PersistentVector<i32>;
+    given : PersistentVector<i32>;
+
+    constructor() 
+    {
+        this.taken = new PersistentVector<i32>("TaId") ;
+        this.given = new PersistentVector<i32>("GiId") ;
+    }
+    public static GivefromPayload(id: i32): TakenGiven
+    {
+        const takenGiven = new TakenGiven();
+        takenGiven.given.push(id);
+        return takenGiven;
+    }
+    public static TakefromPayload(id: i32): TakenGiven
+    {
+        const takenGiven = new TakenGiven();
+        takenGiven.taken.push(id);
+        return takenGiven;
+    }
+    getOneGiven(id:i32):i32
+    {
+        return this.given[id];
+    }
+}
+
+
+
 @nearBindgen
 export class OneReview
 {
@@ -54,10 +113,6 @@ export class Review
         this.review.replace(quarrelPosition,_review);
     }
 
-    getPicture(quarrelPosition: i32): string
-    {
-        return this.review[quarrelPosition].Pictures;
-    }
 }
 
 
@@ -119,21 +174,21 @@ export class Profile
     {
         this.quarrelLost = this.quarrelLost + 1;
     }
-    private incrementTotalBalace(): void 
+    incrementTotalBalace(amount:u32): void 
     {
-        this.totalBalance = this.totalBalance + 100;
+        this.totalBalance = this.totalBalance + amount;
     }
-    private incrementAvailableBalance(): void 
+    incrementAvailableBalance(amount:u32): void 
     {
-        this.availableBalance = this.availableBalance + 100;
+        this.availableBalance = this.availableBalance + amount;
     }
-    private decrementTotalBalace(): void 
+    decrementTotalBalace(amount:u32): void 
     {
-        this.totalBalance = this.totalBalance - 100;
+        this.totalBalance = this.totalBalance - amount;
     }
-    private decrementAvailableBalance(): void 
+    decrementAvailableBalance(amount:u32): void 
     {
-        this.availableBalance = this.availableBalance - 100;
+        this.availableBalance = this.availableBalance - amount;
     }
     private resetAvailableBalance(): void 
     {
@@ -143,3 +198,6 @@ export class Profile
 }
 
 export const listedProfiles = new PersistentUnorderedMap<string, Profile>("LISTED_PROFILES");
+
+export const listedClasses = new PersistentVector<Classes>("LISTED_CLASSES") ;
+export const listedTakenGiven = new PersistentUnorderedMap<string, TakenGiven>("LISTED_TAGI");

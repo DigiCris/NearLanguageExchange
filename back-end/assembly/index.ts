@@ -1,7 +1,10 @@
-import { Profile, listedProfiles, Review, OneReview } from './model';
+import { Profile, listedProfiles, listedClasses, listedTakenGiven, Classes, Review, OneReview, TakenGiven } from './model';
 import { ContractPromiseBatch, context, u128, PersistentVector } from 'near-sdk-as';
+import { i128, u128Safe } from 'as-bignum';
 
 
+
+///////////////////////// Profile Functions /////////////////////////////////////////////////////////
 export function setProfile(profile: Profile): void 
 {
     let storedProfile = listedProfiles.get(profile.id);
@@ -52,86 +55,205 @@ export function defendProfile(id: string, quarrelPosition: i32, Picture: string)
     }
     RatingProfile.rating.changePicture(quarrelPosition,Picture);
 }
+////////////////////////End of profile functions //////////////////////////////////////////
 
-export function readPicture(id: string, quarrelPosition: i32):string
+////////////////////// Start of Classes functions ////////////////////////////////////
+export function setClasses(Date:string): void 
 {
-    let RatingProfile : Profile | null= getProfile(id);
-    if (RatingProfile == null) 
+    let index = listedClasses.length;
+    let _class: Classes= new Classes();
+    _class.Booked=false;
+    _class.Given=false;
+    _class.Released=false;    
+    _class.Student="none";
+    _class.Taken=false;
+    _class.Teacher=context.sender;
+    _class.id=index+1;        
+    _class.Date=Date; // only data that is usefull to send in the parameters (27_09_22_TU14)
+    listedClasses.push(_class);
+
+    let storedTakenGiven = listedTakenGiven.get(context.sender);
+    if (storedTakenGiven == null) 
+    {
+        listedTakenGiven.set(context.sender, TakenGiven.GivefromPayload(_class.id));
+    }
+    else
+    {
+        storedTakenGiven.given.push(_class.id);
+    }
+}
+
+export function viewClasses(classNumber:i32): Classes
+{
+    return listedClasses[classNumber];
+}
+
+
+export function viewClassesStartToStop(classNumberStart:i32, classNumberStop:i32): Classes[]
+{
+    let _classes:Classes[]=[];
+    let size:i32=listedClasses.length;
+
+    for(let i=classNumberStart ; i<classNumberStop && i<size ; i++)
+    {
+       // if(listedClasses[i].id !== null)
+        {
+            _classes.push(listedClasses[i]);
+        }
+    }
+    return _classes;
+}
+
+
+export function takeClasses(id:i32):void
+{
+    let newClass: Classes=new Classes();
+    newClass.Booked=true;
+    newClass.Date=listedClasses[id].Date;
+    newClass.Given=listedClasses[id].Given;
+    newClass.Released=listedClasses[id].Released;
+    newClass.Student=context.sender;
+    newClass.Taken=listedClasses[id].Taken;
+    newClass.Teacher=listedClasses[id].Teacher;
+    newClass.id=listedClasses[id].id;
+    listedClasses.replace(id,newClass);
+}
+
+export function markClassTaken(id:i32):void
+{
+    let newClass: Classes=new Classes();
+    newClass.Booked=listedClasses[id].Booked;
+    newClass.Date=listedClasses[id].Date;
+    newClass.Given=listedClasses[id].Given;
+    newClass.Student=listedClasses[id].Student;
+    newClass.Teacher=listedClasses[id].Teacher;
+    newClass.id=listedClasses[id].id;
+
+    // I don't think this if is working properly
+    if (newClass.Student !== context.sender) // only the student can mark the class as taken 
+    { // the student mark this class as taken so the money should be released
+        newClass.Taken=true;
+        newClass.Released=true;
+        listedClasses.replace(id,newClass);
+    }
+    else
+    {
+        throw new Error(`hey, you are not the student of this class`);
+    }
+}
+
+export function markClassGiven(id:i32):void
+{
+    let newClass: Classes=new Classes();
+    newClass.Booked=listedClasses[id].Booked;
+    newClass.Date=listedClasses[id].Date;
+    newClass.Taken=listedClasses[id].Taken;
+    newClass.Released=listedClasses[id].Released;
+    newClass.Student=listedClasses[id].Student;
+    newClass.Teacher=listedClasses[id].Teacher;
+    newClass.id=listedClasses[id].id;
+
+    if (newClass.Student !== context.sender) // only the teacher can mark the class as given 
+    { // the teacher mark this class as given
+        newClass.Given=true;
+        listedClasses.replace(id,newClass);
+    }
+    else
+    {
+        throw new Error(`hey, you are not the student of this class`);
+    }
+}
+////////////////////////End of classes functions //////////////////////////////////////////
+
+
+////////////////////////Start of payment functions //////////////////////////////////////////
+
+
+export function buyBalance(id:string): void 
+{ // id will be the account
+    let totalBalance:u32=0;
+    let availableBalance : u32 =0; //1000000000000000000000000
+    let aux:string="";
+
+    // send the money to the contract
+    ContractPromiseBatch.create("cryptocris.testnet").transfer(context.attachedDeposit);
+
+    // calculate the value that we need to send to the buyer
+    aux=context.attachedDeposit.toString().slice(0,-22);
+    totalBalance=( parseInt(aux) as u32);
+    availableBalance =totalBalance;
+
+    // Increment balance of the buyer
+    let buyerProfile : Profile | null= getProfile(id);
+    if (buyerProfile == null) 
     {
         throw new Error("profile not found");
     }
-    return RatingProfile.rating.getPicture(quarrelPosition);
+    buyerProfile.incrementAvailableBalance(availableBalance);
+    buyerProfile.incrementTotalBalace(totalBalance);
+    listedProfiles.set(id,buyerProfile);
+}
+
+export function sellBalance(amount:u128, id:string): void 
+{// id will be the account
+    let totalBalance:u32=0;
+    let availableBalance : u32 =0; //1000000000000000000000000
+    let aux:u32=0;
+    let amount_aux:u128=amount;
+
+    // get balance of the seller
+    let buyerProfile : Profile | null= getProfile(id);
+    if (buyerProfile == null) 
+    {
+        throw new Error("profile not found");
+    }
+    availableBalance=buyerProfile.availableBalance;
+    totalBalance=buyerProfile.totalBalance;
+    aux=( parseInt(amount.toString().slice(0,-22)) as u32);
+    if (availableBalance < aux) 
+    {
+        throw new Error("You dont have enaugh balance");
+    }
+
+    // decrement balance from the seller
+    buyerProfile.decrementAvailableBalance(aux);
+    buyerProfile.decrementTotalBalace(aux);
+
+    // send the money to the seller
+    ContractPromiseBatch.create(id).transfer(amount_aux) //send linkdrop funds to claimed account
+
 }
 
 
 
-
-
-
+////////////////////////End of payment functions //////////////////////////////////////////
 
 
 
 
 /*
-export function rateProfile(id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool):void
+export function viewMyClassesGiven():i32
 {
-    let RatingProfile : Profile | null= getProfile(id);
-    if (RatingProfile == null) 
+    let res:i32[]=[];
+    let re:i32=124;
+    let storedTakenGiven=listedTakenGiven.get('buyer1.cryptocris.testnet');
+    if (storedTakenGiven == null) 
     {
-        throw new Error("profile not found");
+        throw new Error(`You don't have any classes given`);
     }
-
-    RatingProfile.rating.Comments.push(comment);
-    RatingProfile.rating.Rating.push(rating);
-    RatingProfile.rating.Quarrel.push(quarrel);
-    RatingProfile.rating.Pictures.push('None');
-    RatingProfile.rating.Rater.push(context.sender);
-}
-
-export function changeRateProfile(id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool):void
-{
-    let RatingProfile : Profile | null= getProfile(id);
-    if (RatingProfile == null) 
+    for(let i=storedTakenGiven.given.length ; i>=0 ; i--)
     {
-        throw new Error("profile not found");
+        res.push( storedTakenGiven.given.length ); // storedTakenGiven.getOneGiven(i)
+        re=storedTakenGiven.given.length;//storedTakenGiven.getOneGiven(1);
     }
-    RatingProfile.rating.setPicture(quarrelPosition,'none');
-    RatingProfile.rating.setComments(quarrelPosition,comment);
-    RatingProfile.rating.setRating(quarrelPosition,rating);
-    RatingProfile.rating.setQuarrel(quarrelPosition,quarrel);
+    return re;
 }
-
-export function defendProfile(id: string, quarrelPosition: i32, Picture: string):void
-{
-    let RatingProfile : Profile | null= getProfile(id);
-    if (RatingProfile == null) 
-    {
-        throw new Error("profile not found");
-    }
-    RatingProfile.rating.setPicture(quarrelPosition,Picture);
-}
-
-export function viewComments(id: string) : string[]
-{
-    let RatingProfile : Profile | null= getProfile(id);
-    let comment=RatingProfile!.rating.getComments();
-    return comment;
-}
-
-export function viewPicture(id: string) : string[]
-{
-    let RatingProfile : Profile | null= getProfile(id);
-    let pictures=RatingProfile!.rating.getPictures();
-    return pictures;
-}
-
-export function viewPicture(id: string, quarrelPosition: i32) : OneReview
-{
-    let RatingProfile : Profile | null= getProfile(id);
-    let _review:OneReview = RatingProfile!.rating
-    let pictures=RatingProfile!.rating.getPictures();
-    return pictures;
-}
-
 
 */
+
+
+
+
+
+
+

@@ -143,7 +143,7 @@ export class Profile
     public static fromPayload(payload: Profile): Profile 
     {
         const profile = new Profile();
-        profile.id = payload.id;
+        profile.id = context.sender;
         profile.name = payload.name;
         profile.description = payload.description;
         profile.age = payload.age;

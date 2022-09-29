@@ -7,12 +7,12 @@ import { i128, u128Safe } from 'as-bignum';
 ///////////////////////// Profile Functions /////////////////////////////////////////////////////////
 export function setProfile(profile: Profile): void 
 {
-    let storedProfile = listedProfiles.get(profile.id);
+    let storedProfile = listedProfiles.get(context.sender);
     if (storedProfile !== null) 
     {
-        throw new Error(`a profile with ${profile.id} already exists`);
+        throw new Error(`a profile with ${context.sender} already exists`);
     }
-    listedProfiles.set(profile.id, Profile.fromPayload(profile));
+    listedProfiles.set(context.sender, Profile.fromPayload(profile));
 }
 
 export function getProfile(id: string): Profile | null 
@@ -68,7 +68,7 @@ export function setClasses(Date:string): void
     _class.Student="none";
     _class.Taken=false;
     _class.Teacher=context.sender;
-    _class.id=index+1;        
+    _class.id=index;        
     _class.Date=Date; // only data that is usefull to send in the parameters (27_09_22_TU14)
     listedClasses.push(_class);
 
@@ -106,7 +106,20 @@ export function viewClassesStartToStop(classNumberStart:i32, classNumberStop:i32
 
 
 export function takeClasses(id:i32):void
-{
+{// Increment total balance from the teacher, decrement total and available balance from the student
+
+    // making sure the Student profile exists
+    let buyerProfile : Profile | null= getProfile(context.sender);
+    if (buyerProfile == null) 
+    {
+        throw new Error("you don't have a profile");
+    }
+    let sellerProfile : Profile | null= getProfile(listedClasses[id].Teacher);
+    if (sellerProfile == null) 
+    {
+        throw new Error("the teacher doesn't have a profile");
+    }
+
     let newClass: Classes=new Classes();
     newClass.Booked=true;
     newClass.Date=listedClasses[id].Date;
@@ -117,10 +130,26 @@ export function takeClasses(id:i32):void
     newClass.Teacher=listedClasses[id].Teacher;
     newClass.id=listedClasses[id].id;
     listedClasses.replace(id,newClass);
+
+    // Decrement balance of the buyer by a fixed price (100)
+    buyerProfile.decrementAvailableBalance(100);
+    buyerProfile.decrementTotalBalace(100);
+    listedProfiles.set(context.sender,buyerProfile);
+
+    // Increment balance of seller by a fixed price (95)... We burn the other 5. only incrementing the total so they can't use it yet
+    sellerProfile.incrementTotalBalace(95);
+    listedProfiles.set(listedClasses[id].Teacher,sellerProfile);
 }
 
 export function markClassTaken(id:i32):void
-{
+{ // I should release the payment
+
+    let sellerProfile : Profile | null= getProfile(listedClasses[id].Teacher);
+    if (sellerProfile == null) 
+    {
+        throw new Error("The teacher doesn't have a profile");
+    }
+
     let newClass: Classes=new Classes();
     newClass.Booked=listedClasses[id].Booked;
     newClass.Date=listedClasses[id].Date;
@@ -135,6 +164,9 @@ export function markClassTaken(id:i32):void
         newClass.Taken=true;
         newClass.Released=true;
         listedClasses.replace(id,newClass);
+
+        sellerProfile.incrementAvailableBalance(95);
+        listedProfiles.set(listedClasses[id].Teacher,sellerProfile);
     }
     else
     {
@@ -169,14 +201,14 @@ export function markClassGiven(id:i32):void
 ////////////////////////Start of payment functions //////////////////////////////////////////
 
 
-export function buyBalance(id:string): void 
+export function buyBalance(): void 
 { // id will be the account
     let totalBalance:u32=0;
     let availableBalance : u32 =0; //1000000000000000000000000
     let aux:string="";
 
     // send the money to the contract
-    ContractPromiseBatch.create("cryptocris.testnet").transfer(context.attachedDeposit);
+    ContractPromiseBatch.create("languagedev1.cryptocris.testnet").transfer(context.attachedDeposit); // money to our wallet
 
     // calculate the value that we need to send to the buyer
     aux=context.attachedDeposit.toString().slice(0,-22);
@@ -184,17 +216,17 @@ export function buyBalance(id:string): void
     availableBalance =totalBalance;
 
     // Increment balance of the buyer
-    let buyerProfile : Profile | null= getProfile(id);
+    let buyerProfile : Profile | null= getProfile(context.sender);
     if (buyerProfile == null) 
     {
         throw new Error("profile not found");
     }
     buyerProfile.incrementAvailableBalance(availableBalance);
     buyerProfile.incrementTotalBalace(totalBalance);
-    listedProfiles.set(id,buyerProfile);
+    listedProfiles.set(context.sender,buyerProfile);
 }
 
-export function sellBalance(amount:u128, id:string): void 
+export function sellBalance(amount:u128): void 
 {// id will be the account
     let totalBalance:u32=0;
     let availableBalance : u32 =0; //1000000000000000000000000
@@ -202,7 +234,7 @@ export function sellBalance(amount:u128, id:string): void
     let amount_aux:u128=amount;
 
     // get balance of the seller
-    let buyerProfile : Profile | null= getProfile(id);
+    let buyerProfile : Profile | null= getProfile(context.sender);
     if (buyerProfile == null) 
     {
         throw new Error("profile not found");
@@ -210,6 +242,7 @@ export function sellBalance(amount:u128, id:string): void
     availableBalance=buyerProfile.availableBalance;
     totalBalance=buyerProfile.totalBalance;
     aux=( parseInt(amount.toString().slice(0,-22)) as u32);
+    aux=aux*110/100; // they have to pay 10% more in order to get the money
     if (availableBalance < aux) 
     {
         throw new Error("You dont have enaugh balance");
@@ -218,9 +251,10 @@ export function sellBalance(amount:u128, id:string): void
     // decrement balance from the seller
     buyerProfile.decrementAvailableBalance(aux);
     buyerProfile.decrementTotalBalace(aux);
+    listedProfiles.set(context.sender,buyerProfile);
 
     // send the money to the seller
-    ContractPromiseBatch.create(id).transfer(amount_aux) //send linkdrop funds to claimed account
+    ContractPromiseBatch.create(context.sender).transfer(amount_aux) //send linkdrop funds to claimed account
 
 }
 

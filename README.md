@@ -1,2 +1,2 @@
-# NearLanguageExchange
-This is a language exchange platform developed using the Near Protocol.
+#LanguageNearYou - This is a language exchange platform developed using the Near Protocol.
+LanguageNearYou "Te acercamos los idiomas", el grupo #10, presenta la dApp que garantizara un intercambio de Aprendizaje de idiomas en la Web 3.0; Solo paga cuando uno desea aprender en su propio calendario UTC, El que desea enseñar puede postularse y si es seleccionado por el estudiante este recibirá el pago en su wallet, siempre y cuando tenga una calificación positiva, quedando un pequeño porcentaje para la startup. https://github.com/DigiCris/NearLanguageExchange.

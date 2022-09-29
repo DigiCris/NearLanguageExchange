@@ -26,8 +26,52 @@ export function getProfiles(): Profile[]
 }
 
 
-export function rateProfile(id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool):void
+export function rateProfile(classNumber:i32, id: string, quarrelPosition: i32, comment: string, rating: u16, quarrel: bool):void
 {
+    let flag:bool=false;
+    let classRated : Classes = new Classes();
+    classRated=viewClasses(classNumber);
+
+    if( classRated.Student == context.sender )
+    {
+        flag=false; // if it is the student we keep it false
+    }
+    else
+    {
+        flag=true; // if it is not the student we switch it to true
+    }
+    if( classRated.Student == "languagedev2.cryptocris.testnet" )
+    {
+        flag=false; // if it was the contract itself we switch it back to false, if not it keeps being true
+    }
+// flag==true value would make the call to panick
+    if( flag==true )
+    {
+        throw new Error("You have no permision to Rate this class");
+    }
+    if( id != classRated.Teacher )
+    {//(false)
+        throw new Error(`You are trying to rate a different teacher ${id} !== ${classRated.Teacher}`);
+    }
+    if(quarrel==false)
+    {
+        markClassTaken(classNumber);
+    }
+    else
+    {// open quarrel inside the class
+        let newClass: Classes=new Classes();
+        newClass.Booked=listedClasses[classNumber].Booked;
+        newClass.Date=listedClasses[classNumber].Date;
+        newClass.Given=listedClasses[classNumber].Given;
+        newClass.Student=listedClasses[classNumber].Student;
+        newClass.Teacher=listedClasses[classNumber].Teacher;
+        newClass.id=listedClasses[classNumber].id;
+        newClass.Taken=listedClasses[classNumber].Taken;
+        newClass.Released=false;
+        newClass.Quarrel=quarrel;
+        listedClasses.replace(classNumber,newClass);
+    }
+
     let RatingProfile : Profile | null= getProfile(id);
     if (RatingProfile == null) 
     {
@@ -67,6 +111,7 @@ export function setClasses(Date:string): void
     _class.Released=false;    
     _class.Student="none";
     _class.Taken=false;
+    _class.Quarrel=false;
     _class.Teacher=context.sender;
     _class.id=index;        
     _class.Date=Date; // only data that is usefull to send in the parameters (27_09_22_TU14)
@@ -129,6 +174,7 @@ export function takeClasses(id:i32):void
     newClass.Taken=listedClasses[id].Taken;
     newClass.Teacher=listedClasses[id].Teacher;
     newClass.id=listedClasses[id].id;
+    newClass.Quarrel=listedClasses[id].Quarrel;
     listedClasses.replace(id,newClass);
 
     // Decrement balance of the buyer by a fixed price (100)
@@ -157,12 +203,14 @@ export function markClassTaken(id:i32):void
     newClass.Student=listedClasses[id].Student;
     newClass.Teacher=listedClasses[id].Teacher;
     newClass.id=listedClasses[id].id;
+    newClass.Quarrel=listedClasses[id].Quarrel;
 
-    // I don't think this if is working properly
-    if (newClass.Student !== context.sender) // only the student can mark the class as taken 
+
+    if (newClass.Student == context.sender) // only the student can mark the class as taken 
     { // the student mark this class as taken so the money should be released
         newClass.Taken=true;
         newClass.Released=true;
+        newClass.Quarrel=false;
         listedClasses.replace(id,newClass);
 
         sellerProfile.incrementAvailableBalance(95);
@@ -170,7 +218,20 @@ export function markClassTaken(id:i32):void
     }
     else
     {
-        throw new Error(`hey, you are not the student of this class`);
+        if ("languagedev2.cryptocris.testnet" == context.sender)
+        {
+            newClass.Taken=true;
+            newClass.Released=true;
+            newClass.Quarrel=false;
+            listedClasses.replace(id,newClass);
+    
+            sellerProfile.incrementAvailableBalance(95);
+            listedProfiles.set(listedClasses[id].Teacher,sellerProfile);
+        }
+        else
+        {
+            throw new Error(`hey, you are not the student of this class`);
+        }
     }
 }
 
@@ -184,15 +245,16 @@ export function markClassGiven(id:i32):void
     newClass.Student=listedClasses[id].Student;
     newClass.Teacher=listedClasses[id].Teacher;
     newClass.id=listedClasses[id].id;
+    newClass.Quarrel=listedClasses[id].Quarrel;
 
-    if (newClass.Student !== context.sender) // only the teacher can mark the class as given 
+    if (newClass.Teacher == context.sender) // only the teacher can mark the class as given 
     { // the teacher mark this class as given
         newClass.Given=true;
         listedClasses.replace(id,newClass);
     }
     else
     {
-        throw new Error(`hey, you are not the student of this class`);
+        throw new Error(`hey, you are not the teacher of this class`);
     }
 }
 ////////////////////////End of classes functions //////////////////////////////////////////
@@ -208,7 +270,7 @@ export function buyBalance(): void
     let aux:string="";
 
     // send the money to the contract
-    ContractPromiseBatch.create("languagedev1.cryptocris.testnet").transfer(context.attachedDeposit); // money to our wallet
+    ContractPromiseBatch.create("languagedev2.cryptocris.testnet").transfer(context.attachedDeposit); // money to our wallet
 
     // calculate the value that we need to send to the buyer
     aux=context.attachedDeposit.toString().slice(0,-22);

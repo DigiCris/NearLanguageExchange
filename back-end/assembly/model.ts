@@ -9,6 +9,7 @@ export class Classes
     Taken : bool;
     Released: bool;
     Booked: bool;
+    Quarrel: bool;
     Teacher : string;
     Student : string;
     Date: string;
@@ -25,6 +26,7 @@ export class Classes
         this.Student="nono";
         this.Date="never";
         this.id=0;
+        this.Quarrel=false;
     }
 }
 

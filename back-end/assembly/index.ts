@@ -67,6 +67,7 @@ export function rateProfile(classNumber:i32, id: string, quarrelPosition: i32, c
         newClass.Teacher=listedClasses[classNumber].Teacher;
         newClass.id=listedClasses[classNumber].id;
         newClass.Taken=listedClasses[classNumber].Taken;
+        newClass.Language=listedClasses[classNumber].Language;
         newClass.Released=false;
         newClass.Quarrel=quarrel;
         listedClasses.replace(classNumber,newClass);
@@ -115,6 +116,13 @@ export function setClasses(Date:string): void
     _class.Teacher=context.sender;
     _class.id=index;        
     _class.Date=Date; // only data that is usefull to send in the parameters (27_09_22_TU14)
+    let storedProfile = listedProfiles.get(context.sender);
+    if (storedProfile == null) 
+    {
+        throw new Error("profile not found. You should create it your profile before setting a new class.");
+    }
+    _class.Language=storedProfile.teach;
+
     listedClasses.push(_class);
 
     let storedTakenGiven = listedTakenGiven.get(context.sender);
@@ -175,6 +183,7 @@ export function takeClasses(id:i32):void
     newClass.Teacher=listedClasses[id].Teacher;
     newClass.id=listedClasses[id].id;
     newClass.Quarrel=listedClasses[id].Quarrel;
+    newClass.Language=listedClasses[id].Language;
     listedClasses.replace(id,newClass);
 
     // Decrement balance of the buyer by a fixed price (100)
@@ -204,6 +213,7 @@ export function markClassTaken(id:i32):void
     newClass.Teacher=listedClasses[id].Teacher;
     newClass.id=listedClasses[id].id;
     newClass.Quarrel=listedClasses[id].Quarrel;
+    newClass.Language=listedClasses[id].Language;
 
 
     if (newClass.Student == context.sender) // only the student can mark the class as taken 
@@ -246,6 +256,7 @@ export function markClassGiven(id:i32):void
     newClass.Teacher=listedClasses[id].Teacher;
     newClass.id=listedClasses[id].id;
     newClass.Quarrel=listedClasses[id].Quarrel;
+    newClass.Language=listedClasses[id].Language;
 
     if (newClass.Teacher == context.sender) // only the teacher can mark the class as given 
     { // the teacher mark this class as given
@@ -319,37 +330,4 @@ export function sellBalance(amount:u128): void
     ContractPromiseBatch.create(context.sender).transfer(amount_aux) //send linkdrop funds to claimed account
 
 }
-
-
-
-////////////////////////End of payment functions //////////////////////////////////////////
-
-
-
-
-/*
-export function viewMyClassesGiven():i32
-{
-    let res:i32[]=[];
-    let re:i32=124;
-    let storedTakenGiven=listedTakenGiven.get('buyer1.cryptocris.testnet');
-    if (storedTakenGiven == null) 
-    {
-        throw new Error(`You don't have any classes given`);
-    }
-    for(let i=storedTakenGiven.given.length ; i>=0 ; i--)
-    {
-        res.push( storedTakenGiven.given.length ); // storedTakenGiven.getOneGiven(i)
-        re=storedTakenGiven.given.length;//storedTakenGiven.getOneGiven(1);
-    }
-    return re;
-}
-
-*/
-
-
-
-
-
-
 

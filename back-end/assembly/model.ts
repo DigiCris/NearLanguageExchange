@@ -14,6 +14,7 @@ export class Classes
     Student : string;
     Date: string;
     id: i32;
+    Language: string;
     //Language: string;
 
     constructor() 
@@ -23,10 +24,11 @@ export class Classes
         this.Released=false;
         this.Booked=false;
         this.Teacher="none";
-        this.Student="nono";
+        this.Student="none";
         this.Date="never";
         this.id=0;
         this.Quarrel=false;
+        this.Language="none";
     }
 }
 

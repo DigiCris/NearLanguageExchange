@@ -1,0 +1,5 @@
+#!/bin/bash
+WASM_FILE_NAME="#!/bin/bash"
+MY_ACCOUNT="jhonaiker.testnet"
+CONTRACT="languagedev"
+near deploy --accountId $CONTRACT.$MY_ACCOUNT --wasmFile build/release/$WASM_FILE_NAME

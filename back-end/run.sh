@@ -1,1 +1,1 @@
-near call languagedev2.jhonaiker.testnet setProfile '{"profile": {"id": "6", "name": "Alumno", "description": "Learning Spanish.", "age": 33, "country": "Sweden", "learn": "Spanish", "teach": "Swedish", "teachTime": "Sa17-Su18", "meet": "meet.google.com/eji-fmdn-ivm", "utc": 2}}' --accountId alumno2.jhonaiker.testnet
+near view languagedev3.cryptocris.testnet getProfiles

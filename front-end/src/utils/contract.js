@@ -11,10 +11,13 @@ export function createProfile(name, description, age, country, learn, teach, tea
 
   console.log(json)
   console.log("asas")
-  return window.contract.setProfile({"profile": {"id": 6, "name": "Profesor", "description": "Learning Swedish.", "age": 33, "country": "Argentina", "learn": "Swedish", "teach": "Spanish", "teachTime": "Sa17-Su18", "meet": "meet.google.com/rri-fdmn-imv", "utc": -3}}); // set_product for the Rust contract
+  return window.contract.setProfile({"profile": {"id": "6", "name": "Profesor", "description": "Learning Swedish.", "age": 33, "country": "Argentina", "learn": "Swedish", "teach": "Spanish", "teachTime": "Sa17-Su18", "meet": "meet.google.com/rri-fdmn-imv", "utc": -3}}); // set_product for the Rust contract (funcionó)
 }
 
 export function getProfile(id) {
-  return window.contract.getProfile(id); // get_products for the Rust contract
+  let res=window.contract.getProfile(id);
+  console.log("Aqui va lo que devolvió el SC",res); // funcionó
+  console.log('termino de devolver el SC');
+  return res; // get_products for the Rust contract
 }
 

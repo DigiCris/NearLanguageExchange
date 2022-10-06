@@ -37,7 +37,7 @@ export async function initializeContract() {
   }
   
   export function login() {
-    window.walletConnection.requestSignIn("languagedev2.jhonaiker.testnet");
+    window.walletConnection.requestSignIn("languagedev3.cryptocris.testnet");
   }
   
   export function logout() {

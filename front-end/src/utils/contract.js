@@ -21,3 +21,13 @@ export function getProfile(id) {
   return res; // get_products for the Rust contract
 }
 
+
+export function buyBalance(amount)
+{ // amount en yokto near
+  return window.contract.buyBalance({},GAS,amount);
+}
+
+export function sellBalance(amount)
+{ // amount en yokto near
+  return window.contract.sellBalance({"amount":amount});
+}

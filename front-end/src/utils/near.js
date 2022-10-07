@@ -20,7 +20,7 @@ export async function initializeContract() {
       nearEnv.contractName,
       {
         viewMethods: ["getProfile"],
-        changeMethods: ["setProfile"],
+        changeMethods: ["setProfile","buyBalance","sellBalance"],
       }
     );
   }

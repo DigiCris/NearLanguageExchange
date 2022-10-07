@@ -174,3 +174,8 @@ input
 	color: white;
 	cursor: pointer;
 }
+
+#swap-submit:hover
+{
+	background-color: #2fecfb;
+}

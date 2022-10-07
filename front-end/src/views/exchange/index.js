@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Form from "../../components/form"
 import { getProfile } from '../../utils/contract'
 import './styles.css'
 import { login, getAccountId, logout, accountBalance } from "../../utils/near";
+import { buyBalance, sellBalance } from '../../utils/contract';
+import { useToast } from '@chakra-ui/react'
+
 
 export default function Exchange() {
   const NEAR_IMG_URL="https://s2.coinmarketcap.com/static/img/coins/200x200/6535.png";
@@ -15,8 +17,12 @@ export default function Exchange() {
   const [tokenBalance, setTokenBalance] = useState(2);// Ballance from profile
   const [isLoged, setIsLoged] = useState(true);// true if it is logged false if it is not
   const [tokenToSpend, setTokenToSpend] = useState(0);
+  const [nearToSpend, setNearToSpend] = useState(0);
   const [tokenToReceive, setTokenToReceive] = useState(0);
   const [accountId, setAccountId] = useState();
+  const [actualizar, setActualizar] = useState(false);
+
+  const toast = useToast()
 
 
   useEffect(() => {
@@ -43,14 +49,30 @@ export default function Exchange() {
   useEffect(() => {
     //let cuenta='alumno3.cryptocris.testnet';
     //let id={'id':cuenta};
-    let id={'id':accountId};
+    inicializacion();
+    //alert("entro");
+  }, [accountId, actualizar])
+  
+  async function inicializacion()
+  {
+    await getId();
+    //await alert("estoy entrando");
+    await getTokenBalance();
+    //await alert("sali");
+  }
 
+  function getTokenBalance()
+  {
+    let id={'id':accountId};
     let profile=getProfile(id);
     profile.then( (value) => {
       console.log(value.availableBalance);
+      //alert("entre");
       setTokenBalance(value.availableBalance);
     } );
-
+  }
+  function getId()
+  {
     getAccountId().then( (value) => {
       console.log("accountId=");
       console.log(value);
@@ -70,9 +92,7 @@ export default function Exchange() {
     } );
 
     } );
-
-  }, [])
-  
+  }
 
   function setValueTokenToReceive(event)
   {
@@ -99,8 +119,18 @@ export default function Exchange() {
 
   function handleSubmit(evt) 
   {
+    // I should tell the person that we are working on it
     evt.preventDefault();
-    alert("hice submit");
+    console.log("hice submit");
+
+    toast({
+      title: 'Transaction sent',
+      status: 'info',
+      duration: 9000,
+      isClosable: true,
+    })
+
+
     if(!isLoged)
     {
       console.log("debo loguearme");
@@ -108,22 +138,67 @@ export default function Exchange() {
     }
     else
     {
+      let mensaje;
+      let descripcion;
       if(Change)
       {
         console.log("debo vender token");
+        console.log( formatAmountToSend(tokenToReceive) );
+        mensaje=sellBalance(formatAmountToSend(tokenToReceive));
+        descripcion="Tokens sold";
       }
       else
       {
         console.log("debo comprar token");
+        console.log( formatAmountToSend(tokenToSpend) );
+        mensaje=buyBalance(formatAmountToSend(tokenToSpend));
+        descripcion="Tokens bought";
       }
+      mensaje.then( (value)=>{
+        console.log("toast");
+        console.log(value);
+        toast({
+          title: 'Transaction succeded',
+          description: descripcion,
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        })
+        setActualizar(!actualizar);
+      } ).catch(function(e) {
+        console.log("toast error");
+        console.log(e.kind.ExecutionError); // "oh, no!"
+          toast({
+            title: 'Failed.',
+            description: e.kind.ExecutionError,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          })
+          setActualizar(!actualizar);
+      });
     }
   }
 
 
+function formatAmountToSend(numero)
+{  
+  let parte_entera=Math.trunc(numero).toString();
+  let parte_decimal= Math.trunc(( round( numero-Math.trunc(numero) ) ) *100).toString().padEnd(24,'0');
+  let mandar=parte_entera+parte_decimal;
+  return(mandar);
+}
+
+  function round(num) 
+  {
+    var m = Number((Math.abs(num) * 100).toPrecision(15));
+    return Math.round(m) / 100 * Math.sign(num);
+  }
+
 
   return (
   <div id='swap-box'>
-<button onClick={logout}>log out</button>
+{/*<button onClick={logout}>log out</button>*/}
     <div id="swap-menu">
       <div onClick={()=>setChange(false)} className={Change?"swap-button":"swap-button swap-button-active"}>Near to Token</div>
       <div onClick={()=>setChange(true)} className={!Change?"swap-button":"swap-button swap-button-active"}>Token to Near</div>
@@ -139,7 +214,7 @@ export default function Exchange() {
 
         <label>
           <img id="alineadoTextoImagenCentro" src={Change?TOKEN_IMG_URL :NEAR_IMG_URL} />{Change?"TOKEN" :"NEAR"} 
-          <div className="swap-balance pick-balance" onClick={()=>setTokenToSpend(Change?tokenBalance:nearBalance)}>Balance: {isLoged?(Change?tokenBalance:nearBalance):"x"}</div>
+          <div className="swap-balance pick-balance" onClick={()=>setTokenToSpend(Change?tokenBalance:(nearBalance-0.01) )}>Balance: {isLoged?(Change?tokenBalance:nearBalance):"x"}</div>
         </label>
 
         <input onChange={setValueTokenToSpend} type="text" name="IHAVE" placeholder="0.0" value={tokenToSpend==0?"":tokenToSpend}></input>

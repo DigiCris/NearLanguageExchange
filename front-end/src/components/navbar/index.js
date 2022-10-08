@@ -29,7 +29,7 @@ const NavLink = ({to, name} ) => (
 export default function Simple() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const Links = [{name:'Home', to: ""}, {name:'Profile', to: "profile"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Get a class", to: "get"}, {name:"Exchange",to: "exchange"}];
+  const Links = [{name:'Home', to: ""}, {name:'Profile', to: "profile"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Take a class", to: "get"}, {name:"Exchange",to: "exchange"}];
 
   return (
     <div>

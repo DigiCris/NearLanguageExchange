@@ -87,7 +87,7 @@ export default function Log() {
 		</div>
 
 		<div onClick={desconectar} className={showMenu?(isLoged?"show":"disapear"):"disapear"} >
-			Desconectar
+			Log out
 		</div>
 	</div>
   );

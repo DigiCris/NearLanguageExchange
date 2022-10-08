@@ -5,6 +5,7 @@ import {getProfiles} from "./utils/contract"
 import { getAccountId } from "./utils/near";
 import Home from "./views/home";
 import MyProfile from "./views/myProfile"
+import Exchange from "./views/exchange"
 import PageNotFound from "./views/pageNotFound";
 import Navbar from "./components/navbar"
 import CreateClass from "./views/createClass"
@@ -40,6 +41,7 @@ function App() {
           <Route path="/created" exact element={<MyClassesCreated />} />
           <Route path="/taken" exact element={<MyClassesTaken />} />
           <Route path="/get" exact element={<GetAClass/>} />
+          <Route path="/exchange" exact element={<Exchange />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>  
       </BrowserRouter>    

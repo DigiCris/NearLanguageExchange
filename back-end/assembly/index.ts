@@ -40,7 +40,7 @@ export function rateProfile(classNumber:i32, id: string, quarrelPosition: i32, c
     {
         flag=true; // if it is not the student we switch it to true
     }
-    if( classRated.Student == "languagedev2.cryptocris.testnet" )
+    if( classRated.Student == "languagedev3.cryptocris.testnet" )
     {
         flag=false; // if it was the contract itself we switch it back to false, if not it keeps being true
     }
@@ -218,7 +218,7 @@ export function markClassTaken(id:i32):void
     }
     else
     {
-        if ("languagedev2.cryptocris.testnet" == context.sender)
+        if ("languagedev3.cryptocris.testnet" == context.sender)
         {
             newClass.Taken=true;
             newClass.Released=true;
@@ -270,7 +270,7 @@ export function buyBalance(): void
     let aux:string="";
 
     // send the money to the contract
-    ContractPromiseBatch.create("languagedev2.cryptocris.testnet").transfer(context.attachedDeposit); // money to our wallet
+    ContractPromiseBatch.create("languagedev3.cryptocris.testnet").transfer(context.attachedDeposit); // money to our wallet
 
     // calculate the value that we need to send to the buyer
     aux=context.attachedDeposit.toString().slice(0,-22);

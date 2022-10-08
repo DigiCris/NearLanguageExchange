@@ -13,6 +13,7 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 import {getProfiles} from "../../utils/contract"
 import { getAccountId } from "../../utils/near";
+import Log from '../log';
 
 const NavLink = ({to, name} ) => (
   <DefaultLink
@@ -59,7 +60,7 @@ export default function Navbar() {
 
   return (
     <div>
-      <Box bg={useColorModeValue('blue.400', 'blue.400')} px={4}>
+      <Box bg={useColorModeValue('blue.400', 'blue.400')} px={4}><Log />
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}

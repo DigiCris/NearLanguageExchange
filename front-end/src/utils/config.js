@@ -1,6 +1,7 @@
 //const CONTRACT_NAME = process.env.REACT_APP_CONTRACT_NAME || "${CONTRACT_NAME}"; // line 1
 
-const CONTRACT_NAME = "languagedev2.jhonaiker.testnet"
+const CONTRACT_NAME = "languagedev3.cryptocris.testnet"
+console.log(CONTRACT_NAME)
 
 function environment(env) {
   switch (env) {

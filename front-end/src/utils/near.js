@@ -20,7 +20,7 @@ export async function initializeContract() {
       nearEnv.contractName,
       {
         viewMethods: ["getProfile", "getProfiles", "viewClassesStartToStop"],
-        changeMethods: ["setProfile", "setClasses", "takeClasses", "rateProfile", "markClassGiven"],
+        changeMethods: ["setProfile", "setClasses", "takeClasses", "rateProfile", "markClassGiven","buyBalance","sellBalance"],
       }
     );
   }
@@ -37,7 +37,7 @@ export async function initializeContract() {
   }
   
   export function login() {
-    window.walletConnection.requestSignIn("languagedev2.jhonaiker.testnet");
+    window.walletConnection.requestSignIn("languagedev3.cryptocris.testnet");
   }
   
   export function logout() {

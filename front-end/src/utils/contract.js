@@ -37,6 +37,14 @@ export function rateProfile(id, wallet, comment, rating) {
   return window.contract.rateProfile({classNumber:id, id: wallet, quarrelPosition: 0, comment, rating, quarrel: false})
 } 
 
+export function buyBalance(amount)
+{ // amount en yokto near
+  return window.contract.buyBalance({},GAS,amount);
+}
 
+export function sellBalance(amount)
+{ // amount en yokto near
+  return window.contract.sellBalance({"amount":amount});
+}
 
 

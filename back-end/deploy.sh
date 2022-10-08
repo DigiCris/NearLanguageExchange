@@ -3,9 +3,9 @@
 ## cada vez que cambio el CONTRACT debo cambiarlo en index.ts ya que esta hardcodeado
 WASM_FILE_NAME="Language-exchange-contract.wasm"
 MY_ACCOUNT="cryptocris.testnet"
-CONTRACT="languagedev2"
-TEACHER="profe2"
-STUDENT="alumno2"
+CONTRACT="languagedev3"
+TEACHER="profe3"
+STUDENT="alumno3"
 
 
 echo "0) create Accounts"

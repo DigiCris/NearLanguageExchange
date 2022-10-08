@@ -1,5 +1,5 @@
 #!/bin/bash
 WASM_FILE_NAME="#!/bin/bash"
 MY_ACCOUNT="cryptocris.testnet"
-CONTRACT="languagedev"
+CONTRACT="languagedev3"
 near deploy --accountId $CONTRACT.$MY_ACCOUNT --wasmFile build/release/$WASM_FILE_NAME

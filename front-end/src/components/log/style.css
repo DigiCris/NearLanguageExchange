@@ -1,0 +1,75 @@
+#login-logout
+{
+	height: 72px;
+	width: 180px;
+	background-color: #eeeaf4;
+	display: flex;
+	flex-direction: column;
+    align-items: center;
+	justify-content: center;
+	float: right;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+#hidden-login-logout
+{
+	height: 72px;
+	width: 180px;
+	background-color: transparent;
+	display: flex;
+	flex-direction: column;
+    align-items: center;
+	justify-content: center;
+	float: right;
+}
+#login-logout div
+{
+	cursor: pointer;
+}
+#log-container
+{
+	height: 24px;
+	width: 180px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #07341d;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#hidden-log-container
+{
+	height: 24px;
+	width: 180px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#svg-wallet-container
+{
+	background-color: #07341d;
+	border-radius: 50%;
+}
+#svg-wallet
+{
+	fill: white;
+}
+#wallet-text
+{
+	color: white;
+}
+#wallet-arrow-down
+{
+	fill: white;
+}
+
+
+.disapear
+{
+    display: none;
+}

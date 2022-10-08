@@ -8,13 +8,18 @@ import {
   Stack, 
   Link as DefaultLink
 } from '@chakra-ui/react';
+import {Link} from "react-router-dom"
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { useEffect, useState } from 'react';
+import {getProfiles} from "../../utils/contract"
+import { getAccountId } from "../../utils/near";
 
 const NavLink = ({to, name} ) => (
   <DefaultLink
     px={2}
     py={1}
     rounded={'md'}
+    color={"white"}
     _hover={{
       textDecoration: 'none',
       bg: useColorModeValue('gray.200', 'gray.700'),
@@ -25,10 +30,32 @@ const NavLink = ({to, name} ) => (
   </DefaultLink>
 );
 
-export default function Simple() {
+export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [linksToShow, setLinksToShow] = useState([])
 
-  const Links = [{name:'Home', to: ""}, {name:'Profile', to: "profile"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Get a class", to: "get"}, {name:"Exchange",to: "exchange"}];
+  
+
+  useEffect(()=> {
+    const getRightLinks = async () => {
+      const LinksWithoutUserCreated = [{name:'Home', to: "/"}, {name:'Profile', to: "profile"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Get a class", to: "get"}, {name:"Exchange",to: "exchange"}];
+      const LinksWithUserCreated = [{name:'Home', to: "/"}, {name:'Create class', to: "create"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Get a class", to: "get"}, {name:"Exchange",to: "exchange"}];;      
+      const data = await getProfiles()
+      const currentAccount = await getAccountId()
+      const userFound = await data.find(datum => datum.wallet = currentAccount)
+      if(userFound){
+        setLinksToShow(LinksWithUserCreated)
+        //console.log(LinksWithUserCreated)
+      } else {
+        setLinksToShow(LinksWithoutUserCreated)
+        //console.log(LinksWithoutUserCreated)
+      }
+    }
+
+    getRightLinks()
+
+  },[])
+
 
   return (
     <div>
@@ -46,7 +73,7 @@ export default function Simple() {
               as={'nav'}
               spacing={4}
               display={{ base: 'none', md: 'flex' }}>
-              {Links.map((link, i) => (
+              {linksToShow.map((link, i) => (
                 <NavLink key={i} to={link.to} name={link.name} />
               ))}
             </HStack>
@@ -56,7 +83,7 @@ export default function Simple() {
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={4}>
-              {Links.map((link, i) => (
+              {linksToShow.map((link, i) => (
                 <NavLink key={i} to={link.to} name={link.name} />
               ))}
             </Stack>

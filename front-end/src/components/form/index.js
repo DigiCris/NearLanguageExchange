@@ -18,6 +18,9 @@ import {
 import {createProfile} from "../../utils/contract"  
 import { getAccountId } from '../../utils/near';
 import { useState } from 'react';
+
+import { logout } from "../../utils/near";
+
   
   export default function FormCard() {
     const [age, setAge] = useState(18)
@@ -41,7 +44,7 @@ import { useState } from 'react';
 
     const createProfileWithForm = () => {
       const period = getPeriodOfClasses()
-      return createProfile(name, description, age, country, learn, teach, period,meet, 0)
+      return createProfile(name, description, age, country, learn, teach, period,meet)
     }
 
     return (

@@ -19,8 +19,8 @@ export async function initializeContract() {
       window.walletConnection.account(),
       nearEnv.contractName,
       {
-        viewMethods: ["getProfile"],
-        changeMethods: ["setProfile"],
+        viewMethods: ["getProfile", "getProfiles", "viewClassesStartToStop"],
+        changeMethods: ["setProfile", "setClasses", "takeClasses", "rateProfile", "markClassGiven"],
       }
     );
   }

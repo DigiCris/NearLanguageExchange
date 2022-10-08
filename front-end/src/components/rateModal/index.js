@@ -21,6 +21,8 @@ import {
   } from '@chakra-ui/react'
 
 import {rateProfile} from "../../utils/contract"  
+import { useToast } from "@chakra-ui/react"
+
 
   function InitialFocus({myClass}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -34,6 +36,36 @@ import {rateProfile} from "../../utils/contract"
     
 
     console.log(myClass)
+
+    const [actualizar, setActualizar] = useState(false);
+
+    const toast = useToast();
+
+
+    function rateProfileAux(myClass_id, myClass_Teacher, _comment, _five)
+    {
+      let prom=rateProfile(myClass_id, myClass_Teacher, _comment, _five);
+      prom.then( ()=>{
+        toast({
+          title: 'Class Rated',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        })
+        setActualizar(!actualizar);
+        onClose();
+      } ).catch(function(e) {
+        console.log("toast error");
+        console.log(e.kind.ExecutionError); // "oh, no!"
+          toast({
+            title: 'Failed.',
+            description: e.kind.ExecutionError,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          })
+      });
+    }
   
     return (
       <>
@@ -66,7 +98,7 @@ import {rateProfile} from "../../utils/contract"
             </ModalBody>
   
             <ModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={()=>rateProfile(myClass.id, myClass.Teacher, comment, 5)}>
+              <Button colorScheme='blue' mr={3} onClick={()=>rateProfileAux(myClass.id, myClass.Teacher, comment, 5)}>
                 Rate
               </Button>
               <Button onClick={onClose}>Cancel</Button>

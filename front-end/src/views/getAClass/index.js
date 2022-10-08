@@ -13,7 +13,8 @@ import {
   FormLabel
 } from "@chakra-ui/react"
 
- import {viewClassesStartToStop, getProfiles, takeClasses} from "../../utils/contract"  
+ import {viewClassesStartToStop, getProfiles, takeClasses} from "../../utils/contract" 
+ import { useToast } from '@chakra-ui/react' 
   
   export default function GetAClass() {
     const [myClasses, setMyClasses] = useState([])
@@ -21,6 +22,9 @@ import {
     const [language, setLanguage] = useState("")
     const [teacher, setTeacher] = useState("")
     const [teachTime, setTeachTime] = useState("")
+    const [actualizar, setActualizar] = useState(false);
+
+    const toast = useToast();
 
     const convertBooleanToText = booleanInput => {
       if(booleanInput){
@@ -51,7 +55,7 @@ import {
         setMyClasses(listOfClassesAvaiable)
       }
       getClasses()      
-    },[])    
+    },[actualizar])    
 
     useEffect(()=> {
       filterData()
@@ -75,6 +79,32 @@ import {
 
       setMyClasses(myCurrentClasses)
     }
+
+
+    function takeClassesAux(myClass_id)
+    {
+      let prom=takeClasses(myClass_id);
+      prom.then( ()=>{
+        toast({
+          title: 'The Class is now yours',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        })
+        setActualizar(!actualizar);
+      } ).catch(function(e) {
+        console.log("toast error");
+        console.log(e.kind.ExecutionError); // "oh, no!"
+          toast({
+            title: 'Failed.',
+            description: e.kind.ExecutionError,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          })
+      });
+    }
+
 
 return (
 <div> 
@@ -118,7 +148,7 @@ return (
       <Td>{convertBooleanToText(myClass.Taken)}</Td>
       <Td>{convertBooleanToText(myClass.Released)}</Td>
       <Td>{myClass.Teacher}</Td>
-      <button onClick={() => takeClasses(myClass.id)}>Take class</button>
+      <button onClick={() => takeClassesAux(myClass.id)}>Take class</button>
     </Tr>
   ))}
   </Tbody>

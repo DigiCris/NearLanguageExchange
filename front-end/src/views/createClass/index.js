@@ -18,18 +18,39 @@ import {
   } from '@chakra-ui/react';
   import { setClasses } from '../../utils/contract';
   import { useState } from 'react';
+  import { useToast } from '@chakra-ui/react'
   
   export default function CreateClass() {
   const [fromTeachHour, setFromTeachHour] = useState(0)
   const [toTeachHour, setToTeachHour] = useState(0)
   const [teachDay, setToTeachDay] = useState("")
 
+  const toast = useToast()
+
     const createClass = () => {
         const stringDate = getRightStringDate()
         if(stringDate === null) {
             console.log("Not valid")
         }
-        setClasses(stringDate)
+        let prom=setClasses(stringDate)
+        prom.then( ()=>{
+          toast({
+            title: 'Class created',
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+          })
+        } ).catch(function(e) {
+          console.log("toast error");
+          console.log(e.kind.ExecutionError); // "oh, no!"
+            toast({
+              title: 'Failed.',
+              description: e.kind.ExecutionError,
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            })
+        });
     }
 
     const getRightStringDate = () => {

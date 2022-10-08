@@ -14,10 +14,13 @@ import {
 
  import {viewClassesStartToStop, markClassGiven} from "../../utils/contract"  
  import {getAccountId} from "../../utils/near"
+ import { useToast } from '@chakra-ui/react'
   
   export default function MyClassesCreated() {
     const [myClasses, setMyClasses] = useState([])
+    const [reload, setReload] = useState(false);
 
+    const toast = useToast()
 
     useEffect(()=> {
       const getClasses = async () => {
@@ -28,7 +31,7 @@ import {
         setMyClasses(listOfClassesCreatedByUser)
       }
       getClasses()      
-    },[])
+    },[reload])
 
     const convertBooleanToText = booleanInput => {
       if(booleanInput){
@@ -37,6 +40,31 @@ import {
         return "No"
       }
     }    
+
+function markClassGivenAux(myClass_id)
+{
+  let prom=markClassGiven(myClass_id)
+  prom.then( ()=>{
+    toast({
+      title: 'Class Marked as given',
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    })
+    setReload(!reload);
+  } ).catch(function(e) {
+    console.log("toast error");
+    console.log(e.kind.ExecutionError); // "oh, no!"
+      toast({
+        title: 'Failed.',
+        description: e.kind.ExecutionError,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
+  });
+}
+
 
 return (
 <div>
@@ -61,7 +89,7 @@ return (
       <Td>{convertBooleanToText(myClass.Taken)}</Td>
       <Td>{convertBooleanToText(myClass.Released)}</Td>
       <Td>{myClass.Student}</Td>
-      <Td><Button disabled={myClass.Given} onClick={()=>markClassGiven(myClass.id)}>Mark</Button></Td>
+      <Td><Button disabled={myClass.Given} onClick={()=>markClassGivenAux(myClass.id)}>Mark</Button></Td>
     </Tr>
   ))}
   </Tbody>

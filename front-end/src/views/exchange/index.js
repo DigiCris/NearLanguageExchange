@@ -5,6 +5,8 @@ import { login, getAccountId, logout, accountBalance } from "../../utils/near";
 import { buyBalance, sellBalance } from '../../utils/contract';
 import { useToast } from '@chakra-ui/react'
 
+import Log from '../../components/log';
+
 
 export default function Exchange() {
   const NEAR_IMG_URL="https://s2.coinmarketcap.com/static/img/coins/200x200/6535.png";
@@ -198,7 +200,6 @@ function formatAmountToSend(numero)
 
   return (
   <div id='swap-box'>
-{/*<button onClick={logout}>log out</button>*/}
     <div id="swap-menu">
       <div onClick={()=>setChange(false)} className={Change?"swap-button":"swap-button swap-button-active"}>Near to Token</div>
       <div onClick={()=>setChange(true)} className={!Change?"swap-button":"swap-button swap-button-active"}>Token to Near</div>

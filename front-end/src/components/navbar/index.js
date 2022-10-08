@@ -9,6 +9,7 @@ import {
   Link as DefaultLink
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import Log from '../log';
 
 const NavLink = ({to, name} ) => (
   <DefaultLink
@@ -32,7 +33,7 @@ export default function Simple() {
 
   return (
     <div>
-      <Box bg={useColorModeValue('blue.400', 'blue.400')} px={4}>
+      <Box bg={useColorModeValue('blue.400', 'blue.400')} px={4}><Log />
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}

@@ -24,14 +24,14 @@ import {
 
     useEffect(()=> {
       const getClasses = async () => {
-        const listOfClasses = await viewClassesStartToStop(0, 10)
+        const listOfClasses = await viewClassesStartToStop(0, 1000)
         const myAccount = await getAccountId()
         const listOfClassesCreatedByUser = listOfClasses.filter(myClass => myClass.Teacher === myAccount)
-        console.log(listOfClassesCreatedByUser)
         setMyClasses(listOfClassesCreatedByUser)
       }
       getClasses()      
     },[reload])
+
 
     const convertBooleanToText = booleanInput => {
       if(booleanInput){

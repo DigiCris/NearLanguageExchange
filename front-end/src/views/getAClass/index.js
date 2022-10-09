@@ -10,7 +10,8 @@ import {
   Box,
   HStack, 
   FormControl,
-  FormLabel
+  FormLabel,
+  Button
 } from "@chakra-ui/react"
 
  import {viewClassesStartToStop, getProfiles, takeClasses} from "../../utils/contract" 
@@ -36,19 +37,26 @@ import {
 
     useEffect(()=> {
       const getClasses = async () => {
-        const listOfClasses = await viewClassesStartToStop(0, 10)
+        const listOfClasses = await viewClassesStartToStop(0, 1000)
         const listOfClassesAvaiable = await listOfClasses.filter(myClass => !myClass.Booked)
         const profilesList = await getProfiles()
+        console.log(profilesList)
+
+        console.log("Clase con error: ", listOfClasses[7])
 
         for(let i = 0; i < listOfClasses.length; i++){
           let teacherId = listOfClasses[i].Teacher 
 
           let profileOfTeacher = profilesList.find(profile => profile.wallet === teacherId)
+          console.log("Aqui",profileOfTeacher)
+          if(!profileOfTeacher){
+            console.log("Error", i)
+          }
 
-          console.log(profileOfTeacher)
-          listOfClasses[i].Teach = profileOfTeacher.teach
-
-
+          if(profileOfTeacher){
+            listOfClasses[i].Teach = profileOfTeacher.teach
+          }
+          
         }
         console.log(listOfClassesAvaiable)
         setAllMyClasses(listOfClassesAvaiable)
@@ -137,6 +145,7 @@ return (
       <Th>Taken</Th>
       <Th>Released</Th>
       <Th>Teacher</Th>
+      <Th>Take Class</Th>
     </Tr>
   </Thead>
   <Tbody>
@@ -148,7 +157,7 @@ return (
       <Td>{convertBooleanToText(myClass.Taken)}</Td>
       <Td>{convertBooleanToText(myClass.Released)}</Td>
       <Td>{myClass.Teacher}</Td>
-      <button onClick={() => takeClassesAux(myClass.id)}>Take class</button>
+      <Td><Button onClick={() => takeClassesAux(myClass.id)}>Take</Button></Td>
     </Tr>
   ))}
   </Tbody>

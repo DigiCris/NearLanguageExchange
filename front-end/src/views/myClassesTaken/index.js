@@ -17,7 +17,6 @@ import {
   export default function MyClassesCreated() {
     const [myClasses, setMyClasses] = useState([])
     const [allMyClasses, setAllMyClasses] = useState([])
-    const [isClassTaken, setIsClassTaken] = useState(true)
 
     const convertBooleanToText = booleanInput => {
       if(booleanInput){
@@ -29,17 +28,22 @@ import {
 
     useEffect(()=> {
       const getClasses = async () => {
-        const listOfClasses = await viewClassesStartToStop(0, 10)
+        const listOfClasses = await viewClassesStartToStop(0, 1000)
         const accountId = await getAccountId()
         const listOfClassesAvaiable = await listOfClasses.filter(myClass => myClass.Student === accountId)
         const profilesList = await getProfiles()
+        console.log(listOfClassesAvaiable)
 
         for(let i = 0; i < listOfClasses.length; i++){
           let teacherId = listOfClasses[i].Teacher 
+          console.log(teacherId)
 
           let profileOfTeacher = profilesList.find(profile => profile.wallet === teacherId)
-          listOfClasses[i].Teach = profileOfTeacher.teach
-          listOfClasses[i].Meet = profileOfTeacher.meet
+          if(profileOfTeacher){
+            listOfClasses[i].Teach = profileOfTeacher.teach
+            listOfClasses[i].Meet = profileOfTeacher.meet
+          }
+
 
         }
         setMyClasses(listOfClassesAvaiable)
@@ -47,13 +51,6 @@ import {
       }
       getClasses()      
     },[])
-    
-    useEffect(()=> {
-      console.log(allMyClasses)
-      const listOfClasses = allMyClasses.filter(currentClass => currentClass.Taken == isClassTaken)
-      console.log(isClassTaken)
-      setMyClasses(listOfClasses)
-    },[isClassTaken])
     
 return (
 <div> 

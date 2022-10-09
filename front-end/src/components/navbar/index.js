@@ -40,10 +40,10 @@ export default function Navbar() {
   useEffect(()=> {
     const getRightLinks = async () => {
       const LinksWithoutUserCreated = [{name:'Home', to: "/"}, {name:'Profile', to: "profile"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Take a class", to: "get"}, {name:"Exchange",to: "exchange"}];
-      const LinksWithUserCreated = [{name:'Home', to: "/"}, {name:'Create class', to: "create"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Take a class", to: "get"}, {name:"Exchange",to: "exchange"}];;      
+      const LinksWithUserCreated = [{name:'Home', to: "/"}, {name:'Create class', to: "create"}, {name:'My classes created', to: "created"}, {name:"My classes taken", to: "taken"}, {name:"Take a class", to: "get"}, {name:"Exchange",to: "exchange"}];      
       const data = await getProfiles()
       const currentAccount = await getAccountId()
-      const userFound = await data.find(datum => datum.wallet = currentAccount)
+      const userFound = await data.find(datum => datum.wallet === currentAccount)
       if(userFound){
         setLinksToShow(LinksWithUserCreated)
         //console.log(LinksWithUserCreated)

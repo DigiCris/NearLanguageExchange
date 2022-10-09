@@ -38,7 +38,6 @@ import { logout } from "../../utils/near";
 
     const getPeriodOfClasses = () => {
       let period = fromTeachTime + "-hour:" + fromTeachHour + "/" + toTeachTime + "-hour:" + toTeachHour
-      console.log(period)
       return period
     }
 

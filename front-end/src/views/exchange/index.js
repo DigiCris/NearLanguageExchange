@@ -68,7 +68,6 @@ export default function Exchange() {
     let id={'id':accountId};
     let profile=getProfile(id);
     profile.then( (value) => {
-      console.log(value.availableBalance);
       //alert("entre");
       setTokenBalance(value.availableBalance);
     } );

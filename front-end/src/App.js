@@ -19,10 +19,13 @@ function App() {
   useEffect(()=> {
     const getUsers = async () => {
       const data = await getProfiles()
+      
       const currentAccount = await getAccountId()
-      const userFound = data.find(datum => datum.wallet = currentAccount)
+      const userFound = data.find(datum => datum.wallet == currentAccount)
       if(userFound){
         setUser(userFound)
+      } else {
+        setUser(undefined)
       }
     }
 
@@ -36,7 +39,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" exact element={<Home />} />
-          {!user && <Route path="/profile" exact element={<MyProfile />} />}
+          {!user && <Route path="/profile" exact element={<MyProfile/>} />}
           {user && <Route path="/create" exact element={<CreateClass />} />}
           <Route path="/created" exact element={<MyClassesCreated />} />
           <Route path="/taken" exact element={<MyClassesTaken />} />

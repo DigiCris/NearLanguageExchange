@@ -35,7 +35,6 @@ import { useToast } from "@chakra-ui/react"
 
     
 
-    console.log(myClass)
 
     const [actualizar, setActualizar] = useState(false);
 

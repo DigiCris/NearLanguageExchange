@@ -47,20 +47,17 @@ export default function Log() {
     {
       res="Connect";
     }
-    console.log(res);
     return res;
   }
 
 
   function desconectar()
   {
-    console.log("desconectar");
     logout();
   }
   function switchView()
   {
     setShowMenu(!showMenu);
-    console.log("switch view="+showMenu);
     if(!isLoged)
     {
       login();

@@ -12,7 +12,7 @@ import CreateClass from "./views/createClass"
 import MyClassesCreated from "./views/myClassesCreated"
 import MyClassesTaken from "./views/myClassesTaken"
 import GetAClass from "./views/getAClass"
-
+ 
 function App() {
   const [user, setUser] = useState({})
 
